@@ -9,22 +9,37 @@ from tkinter import messagebox
 
 import numpy as np
 
+#Main game GUI
 class App:
     def __init__(self):
+        #Variable represent the status of the game
         self._running = True
+        #The game window
         self._display_surf = None
+        #The player image
         self._image_player = None
+        #The block image
         self._image_block = None
+        #the flag image
         self._image_flag = None
+        # Arrow down image
         self._image_down = None
+        # Arrow right image
         self._image_right = None
+        # Arrow left image
         self._image_left = None
+        # Arrow up image
         self._image_up = None
+        #the final moves taken from start to the goal
         self._moves = []
+        # The maze generated
         self.maze = maze.Maze(10)
         self.maze_mdp= None
+        # The agent who try to reach the goal
         self.player = player.Player(self.maze.Block_size, self.maze)
+        #The start positioin of the agent
         self.start = None
+        #The Utility matrix generated from one of the 2 policies
         self.utilty = None
     def on_init(self):
         pygame.init()
@@ -47,6 +62,7 @@ class App:
     def on_loop(self):
         pass
  
+    #Render the maze shape again each step
     def on_render(self):
         self._display_surf.fill((255,255,255))
         self._display_surf.blit(self._image_player,(self.player.x,self.player.y))
@@ -101,7 +117,8 @@ class App:
             print(final_utlity)
             print(final_policy)
         self.utilty = final_utlity
-            
+
+    #This function detect the path to the goal from start
     def reach_goal(self):    
         print("Steps to reach to goal from start are :")
         stop_counter = len(self.utilty) * len(self.utilty)
@@ -155,7 +172,6 @@ class App:
             stop_counter-=1
             
     def on_execute(self):
-        
         if self.on_init() == False:
             self._running = False
         
@@ -163,7 +179,7 @@ class App:
         
         iterat = 0
         flag = True
-        
+        #Start the game
         while( self._running ):
             clock.tick(5)
             pygame.event.pump()
@@ -198,6 +214,7 @@ class App:
                     Tk().wm_withdraw() #to hide the main window
                     messagebox.showerror('Result','Player Cant Reached to the Goal')
             iterat += 1
+            #To Exit the game press ESC button
             if (keys[K_ESCAPE]):
                 self._running = False
  
@@ -205,7 +222,7 @@ class App:
             self.on_render()
         self.on_cleanup()
         
-
+#Check if the goal is reached through the game
 def isGoalExsist(maze_arr):
     return 3 in maze_arr
 
@@ -220,6 +237,3 @@ if __name__ == "__main__" :
     theApp.solve_maze()
     theApp.reach_goal()
     theApp.on_execute()
-    
-   
-    
