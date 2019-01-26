@@ -15,7 +15,6 @@ class Player:
     def moveRight(self):
         new_indx = convert_to_index(self.x + self.speed, self.y, math.sqrt(len(self.maze.maze)), self.speed)
         prev_indx = convert_to_index(self.x, self.y, math.sqrt(len(self.maze.maze)), self.speed)
-        print(self.maze.maze)
         if self.maze.maze[new_indx] == 0 :
             self.x = self.x + self.speed
             self.maze.maze[new_indx] = 2
@@ -29,7 +28,6 @@ class Player:
     def moveLeft(self):
         new_indx = convert_to_index(self.x - self.speed, self.y, math.sqrt(len(self.maze.maze)), self.speed)
         prev_indx = convert_to_index(self.x, self.y, math.sqrt(len(self.maze.maze)), self.speed)
-        print(self.maze.maze)
         if self.maze.maze[new_indx] == 0 :
             self.x = self.x - self.speed
             self.maze.maze[new_indx] = 2
@@ -39,11 +37,10 @@ class Player:
             return 0
         elif self.maze.maze[new_indx] == 3 :
             return 10
- 
+        
     def moveUp(self):
         new_indx = convert_to_index(self.x,self.y - self.speed, math.sqrt(len(self.maze.maze)), self.speed)
         prev_indx = convert_to_index(self.x, self.y, math.sqrt(len(self.maze.maze)), self.speed)
-        print(self.maze.maze)
         if self.maze.maze[new_indx] == 0 :
             self.y = self.y - self.speed
             self.maze.maze[new_indx] = 2
@@ -57,7 +54,6 @@ class Player:
     def moveDown(self):
         new_indx = convert_to_index(self.x,self.y + self.speed, math.sqrt(len(self.maze.maze)), self.speed)
         prev_indx = convert_to_index(self.x, self.y, math.sqrt(len(self.maze.maze)), self.speed)
-        print(self.maze.maze)
         if self.maze.maze[new_indx] == 0 :
             self.y = self.y + self.speed
             self.maze.maze[new_indx] = 2
