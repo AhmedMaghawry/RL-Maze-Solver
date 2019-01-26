@@ -8,7 +8,7 @@ class Maze:
        flagx = random.randint(size,(size + 2) * (size + 2) - (size + 2) - 1)
        self.maze = generateMap(size, flagx)
     
-    def draw(self,display_surf,image_surf, image_flag):
+    def draw(self,display_surf,image_surf, image_flag, image_down, image_up, image_left, image_right):
        bx = 0
        by = 0
        for i in range(0,(self.N + 2)*(self.N + 2)):
@@ -16,7 +16,14 @@ class Maze:
                display_surf.blit(image_surf,( bx * self.Block_size , by * self.Block_size))
            elif self.maze[ bx + (by*(self.N + 2)) ] == 3:
                display_surf.blit(image_flag,( bx * self.Block_size , by * self.Block_size))
- 
+           elif self.maze[ bx + (by*(self.N + 2)) ] == 4:
+               display_surf.blit(image_down,( bx * self.Block_size , by * self.Block_size))
+           elif self.maze[ bx + (by*(self.N + 2)) ] == 5:
+               display_surf.blit(image_up,( bx * self.Block_size , by * self.Block_size))
+           elif self.maze[ bx + (by*(self.N + 2)) ] == 6:
+               display_surf.blit(image_left,( bx * self.Block_size , by * self.Block_size))
+           elif self.maze[ bx + (by*(self.N + 2)) ] == 7:
+               display_surf.blit(image_right,( bx * self.Block_size , by * self.Block_size))
            bx = bx + 1
            if bx > (self.N + 1):
                bx = 0 

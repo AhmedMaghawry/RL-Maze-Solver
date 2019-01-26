@@ -3,9 +3,11 @@ import pygame
 import player
 import maze 
 from grid import MazeMDP
+import math
+from tkinter import *
+from tkinter import messagebox
 
 import numpy as np
-import matplotlib.pyplot as plt
 
 class App:
     def __init__(self):
@@ -14,6 +16,11 @@ class App:
         self._image_player = None
         self._image_block = None
         self._image_flag = None
+        self._image_down = None
+        self._image_right = None
+        self._image_left = None
+        self._image_up = None
+        self._moves = []
         self.maze = maze.Maze(10)
         self.maze_mdp= None
         self.player = player.Player(self.maze.Block_size, self.maze)
@@ -28,6 +35,10 @@ class App:
         self._image_player = pygame.image.load('player.png')
         self._image_block = pygame.image.load('block.png')
         self._image_flag = pygame.image.load('flag.png')
+        self._image_down = pygame.image.load('down.png')
+        self._image_up = pygame.image.load('up.png')
+        self._image_right = pygame.image.load('right.png')
+        self._image_left = pygame.image.load('left.png')
  
     def on_event(self, event):
         if event.type == QUIT:
@@ -39,7 +50,7 @@ class App:
     def on_render(self):
         self._display_surf.fill((255,255,255))
         self._display_surf.blit(self._image_player,(self.player.x,self.player.y))
-        self.maze.draw(self._display_surf, self._image_block, self._image_flag)
+        self.maze.draw(self._display_surf, self._image_block, self._image_flag, self._image_down, self._image_up, self._image_left, self._image_right)
         pygame.display.flip()
  
     def on_cleanup(self):
@@ -89,12 +100,10 @@ class App:
             final_policy = policy_grids[:, :, -1]
             print(final_utlity)
             print(final_policy)
-        plt.figure()
-        self.maze_mdp.plot_policy(final_utlity,final_policy)
         self.utilty = final_utlity
-        plt.show()
             
-    def reach_goal(self):
+    def reach_goal(self):    
+        print("Steps to reach to goal from start are :")
         stop_counter = len(self.utilty) * len(self.utilty)
         iterator = self.start
         while (self.utilty[iterator[0]][iterator[1]] != 1 and stop_counter != 0) :
@@ -121,45 +130,74 @@ class App:
             
             if direction == 0 :
                 print("Move Down")
-                self.player.moveDown()
+                #self._display_surf.blit(self._image_down,(iterator[0],iterator[1]))
+                #self.player.moveDown()
+                self._moves.append(0)
                 iterator = [iterator[0] + 1,iterator[1]]
             elif direction == 1 :
                 print("Move Up")
-                self.player.moveUp()
+                #self._display_surf.blit(self._image_up,(iterator[0],iterator[1]))
+                #self.player.moveUp()
+                self._moves.append(1)
                 iterator = [iterator[0] - 1,iterator[1]]
             elif direction == 2 :
                 print("Move Left")
-                self.player.moveLeft()
+                #self._display_surf.blit(self._image_left,(iterator[0],iterator[1]))
+                #self.player.moveLeft()
+                self._moves.append(2)
                 iterator = [iterator[0],iterator[1] - 1]
             else:
                 print("Move Right")
-                self.player.moveRight()
+                #self.player.moveRight()
+                #self._display_surf.blit(self._image_right,(iterator[0],iterator[1]))
+                self._moves.append(3)
                 iterator = [iterator[0],iterator[1] + 1]
             stop_counter-=1
             
     def on_execute(self):
+        
         if self.on_init() == False:
             self._running = False
         
         clock = pygame.time.Clock()
         
+        iterat = 0
+        flag = True
+        
         while( self._running ):
-            clock.tick(10)
-            
+            clock.tick(5)
             pygame.event.pump()
             keys = pygame.key.get_pressed()
- 
-#            if (keys[K_RIGHT]):
-#                self.player.moveRight()
-# 
-#            if (keys[K_LEFT]):
-#                self.player.moveLeft()
-# 
-#            if (keys[K_UP]):
-#                self.player.moveUp()
-# 
-#            if (keys[K_DOWN]):
-#                self.player.moveDown()
+            if iterat < len(self._moves):
+                if(self._moves[iterat] == 0):
+                    self.player.moveDown()
+                    #self._display_surf.blit(self._image_down,(self.player.x,self.player.y))
+                    #self.player.maze.maze[convert_to_index(self.player.x, self.player.y, math.sqrt(len(self.maze.maze)), 50)] = 7
+                elif(self._moves[iterat] == 1):
+                    self.player.moveUp()
+                    #self._display_surf.blit(self._image_up,(self.player.x,self.player.y))
+                    #self.player.maze.maze[convert_to_index(self.player.x, self.player.y, math.sqrt(len(self.maze.maze)), 50)] = 5
+                elif(self._moves[iterat] == 2):
+                    self.player.moveLeft()
+                    #self._display_surf.blit(self._image_left,(self.player.x,self.player.y))
+                    #self.player.maze.maze[convert_to_index(self.player.x, self.player.y, math.sqrt(len(self.maze.maze)), 50)] = 6
+                elif(self._moves[iterat] == 3):
+                    self.player.moveRight()
+                    #self._display_surf.blit(self._image_right,(self.player.x,self.player.y))
+                    #self.player.maze.maze[convert_to_index(self.player.x, self.player.y, math.sqrt(len(self.maze.maze)), 50)] = 7
+            elif flag :
+                flag= False
+                if (not isGoalExsist(self.player.maze.maze)) :
+                    #Display reached to goal
+                    print("Goal Reached")
+                    Tk().wm_withdraw() #to hide the main window
+                    messagebox.showinfo('Result','Player Reached to the Goal')
+                else :
+                    #Goal cant Reached
+                    print("Goal Not Reached")
+                    Tk().wm_withdraw() #to hide the main window
+                    messagebox.showerror('Result','Player Cant Reached to the Goal')
+            iterat += 1
             if (keys[K_ESCAPE]):
                 self._running = False
  
@@ -167,7 +205,14 @@ class App:
             self.on_render()
         self.on_cleanup()
         
-    
+
+def isGoalExsist(maze_arr):
+    return 3 in maze_arr
+
+def convert_to_index(x, y, size, block):
+    new_x = x / block
+    new_y = y / block
+    return int((new_y) * size + new_x)
  
 if __name__ == "__main__" :
     theApp = App()
